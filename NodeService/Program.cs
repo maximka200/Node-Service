@@ -19,7 +19,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Hierarchy Service API",
+        Title = "Node Service API",
         Version = "v1"
     });
     
@@ -68,11 +68,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AdminOnly", policy =>
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("AdminOnly", policy =>
         policy.RequireRole("Admin"));
-});
 
 builder.Services.AddScoped<INodeService, NodeService.Services.NodeService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
