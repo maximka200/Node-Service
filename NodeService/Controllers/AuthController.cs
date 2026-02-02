@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NodeService.Models;
 using NodeService.Services.Interfaces;
@@ -16,6 +17,16 @@ public class AuthController(IAuthService authService) : ControllerBase
         if (!success)
             return BadRequest(new Error("User already exists"));
 
+        return Ok();
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpPost("register-admin")]
+    public IActionResult RegisterAdmin(RegisterRequest request)
+    {
+        var success = authService.Register(request.UserName, request.Password, Roles.Admin);
+        if (!success)
+            return BadRequest("User already exists");
         return Ok();
     }
     
