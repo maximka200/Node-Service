@@ -1,0 +1,13 @@
+services:
+  nodeservice:
+    build: .
+    ports:
+      - "5271:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Data Source=/app/Data/nodeservice.db
+      - Jwt__Issuer=NodeService
+      - Jwt__Audience=NodeServiceUsers
+      - Jwt__Key=9f3b7c2a8e6d4c1b9a0e7f5d3c2b1a0987654321abcdef1234567890abcdef
+    volumes:
+      - ./Data:/app/Data

@@ -59,7 +59,7 @@ public class NodeController(INodeService nodeService) : ControllerBase
     public async Task<IActionResult> DeleteNode(Guid id)
     {
         var success = await nodeService.DeleteNodeAsync(id);
-        if (!success) return NotFound();
+        if (!success) return NotFound(new Error("Cannot delete node (not found)"));
         return NoContent();
     }
 }

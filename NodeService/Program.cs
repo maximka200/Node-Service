@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NodeService.Models;
 using NodeService.Repository;
 using NodeService.Services;
 using NodeService.Services.Interfaces;
@@ -93,7 +94,18 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
     db.Database.Migrate();
+
+    var adminSection = config.GetSection("Admin");
+    var username = adminSection["UserName"];
+    var password = adminSection["Password"];
+
+    if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+    {
+        db.CreateUser(username, password, Roles.Admin);
+    }
 }
 
 app.Run();

@@ -21,7 +21,6 @@ public class NodeService(AppDbContext context) : INodeService
         foreach (var node in lookup.Values)
         {
             if (node.ParentId == null || !lookup.TryGetValue(node.ParentId.Value, out var parent)) continue;
-            parent.Children ??= new List<Node>();
             parent.Children.Add(node);
         }
 
