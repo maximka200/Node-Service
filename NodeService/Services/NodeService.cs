@@ -15,8 +15,19 @@ public class NodeService(AppDbContext context) : INodeService
     public Task<IEnumerable<NodeDto>> GetTreeAsync()
     {
         var nodes = context.GetTree();
-        var tree = nodes.Select(MapNode);
-        return Task.FromResult(tree);
+
+        var lookup = nodes.ToDictionary(n => n.Id);
+
+        foreach (var node in lookup.Values)
+        {
+            if (node.ParentId == null || !lookup.TryGetValue(node.ParentId.Value, out var parent)) continue;
+            parent.Children ??= new List<Node>();
+            parent.Children.Add(node);
+        }
+
+        var roots = lookup.Values.Where(n => n.ParentId == null);
+
+        return Task.FromResult(roots.Select(MapNode));
     }
 
     public Task<NodeDto> CreateNodeAsync(CreateNodeRequest request)
@@ -43,7 +54,7 @@ public class NodeService(AppDbContext context) : INodeService
         {
             Id = node.Id,
             Name = node.Name,
-            Children = node.Children?.Select(MapNode).ToList() ?? new List<NodeDto>()
+            Children = node.Children?.Select(MapNode).ToList() ?? []
         };
     }
 }

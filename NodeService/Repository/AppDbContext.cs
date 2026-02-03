@@ -60,10 +60,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     public IEnumerable<Node> GetTree()
     {
-        return Nodes
-            .Where(n => n.ParentId == null)
-            .Include(n => n.Children)
-            .ToList();
+        return Nodes.AsNoTracking().ToList();
     }
 
     public Node CreateNode(string name, Guid? parentId)
@@ -153,5 +150,4 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         }
         return false;
     }
-    
 }
